@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "179184621922",
+    "firebase_url": "https://usil-proyecto.firebaseio.com",
+    "project_id": "usil-proyecto",
+    "storage_bucket": "usil-proyecto.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:179184621922:android:481ff05c02d2fd4487b43b",
+        "android_client_info": {
+          "package_name": "com.example.hmsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "179184621922-m8btq1hf9106r8fe75ohrr2jn3igg0ts.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.hmsapp",
+            "certificate_hash": "2cae5e4482bad779fcc4cbd50d0c6b08705fe3d4"
+          }
+        },
+        {
+          "client_id": "179184621922-3ab96dg57piq2vfg7qgcn2f0shrr2fje.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJLmbL_tv-b7EvRZwTVBlh56L7YX8Zvw0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "179184621922-kl3fh74recf9tct3p556de28fkq2u022.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
