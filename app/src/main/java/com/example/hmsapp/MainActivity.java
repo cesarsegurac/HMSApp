@@ -26,6 +26,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;*/
 
+import com.huawei.agconnect.config.AGConnectServicesConfig;
 import com.huawei.hms.aaid.HmsInstanceId;
 import com.huawei.hms.common.ApiException;
 
@@ -116,23 +117,25 @@ startActivityForResult(signInIntent, RC_SIGN_IN); */
             }
         });
 
-        try {
+        /*try {
             String token = HmsInstanceId.getInstance(this).getToken(CLIENT_ID, "HCM");
             Log.i(TAG, "el token = " + token);
 
 
         } catch (ApiException e) {
             e.printStackTrace();
-        }
+        }*/
 
 
         Log.i(TAG, "entro main activity");
 
         // PUSH
-        MyReceiver receiver = new MyReceiver();
+        /*MyReceiver receiver = new MyReceiver();
         IntentFilter filter=new IntentFilter();
         filter.addAction("com.example.hmsapp.ON_NEW_TOKEN");
-        MainActivity.this.registerReceiver(receiver,filter);
+        MainActivity.this.registerReceiver(receiver,filter);*/
+
+        getToken();
     }
 
     @Override
@@ -419,5 +422,22 @@ startActivityForResult(signInIntent, RC_SIGN_IN); */
                 tvtoken.setText(token);
             }
         }
+    }
+
+    private void getToken(){
+        new Thread(){
+            @Override
+            public void run() {
+                try {
+                    // leer el archivo agconnect-services.json
+                    String appId = AGConnectServicesConfig.fromContext(MainActivity.this).getString("client/app_id");
+                    String token = HmsInstanceId.getInstance(MainActivity.this).getToken(appId, "HCM");
+                    Log.i(TAG, "get token:" + token);
+                    //tvtoken.setText(token);
+                } catch (ApiException e) {
+                    Log.i(TAG, "get token failed:" + e);
+                }
+            }
+        }.start();
     }
 }
