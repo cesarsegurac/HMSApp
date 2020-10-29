@@ -4,15 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -36,10 +32,7 @@ import net.openid.appauth.AuthorizationRequest;
 import net.openid.appauth.AuthorizationResponse;
 import net.openid.appauth.AuthorizationService;
 import net.openid.appauth.AuthorizationServiceConfiguration;
-import net.openid.appauth.ClientAuthentication;
-import net.openid.appauth.ClientSecretBasic;
 import net.openid.appauth.ResponseTypeValues;
-import net.openid.appauth.TokenRequest;
 import net.openid.appauth.TokenResponse;
 
 import org.json.JSONException;
@@ -50,7 +43,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity  {
@@ -117,25 +109,12 @@ startActivityForResult(signInIntent, RC_SIGN_IN); */
             }
         });
 
-        /*try {
-            String token = HmsInstanceId.getInstance(this).getToken(CLIENT_ID, "HCM");
-            Log.i(TAG, "el token = " + token);
-
-
-        } catch (ApiException e) {
-            e.printStackTrace();
-        }*/
-
-
         Log.i(TAG, "entro main activity");
 
-        // PUSH
-        /*MyReceiver receiver = new MyReceiver();
-        IntentFilter filter=new IntentFilter();
-        filter.addAction("com.example.hmsapp.ON_NEW_TOKEN");
-        MainActivity.this.registerReceiver(receiver,filter);*/
 
-        getToken();
+        // PUSH
+
+        GetHmsPushToken();
     }
 
     @Override
@@ -280,22 +259,7 @@ startActivityForResult(signInIntent, RC_SIGN_IN); */
 */
         }
     }
-/*
-    public String getUserInfo(String accessToken) throws IOException {
-        try {
-            URL url = new URL("https://www.googleapis.com/oauth2/v3/userinfo?alt=json");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestProperty("Authorization", "Bearer " + accessToken);
 
-            InputStream inputStream = conn.getInputStream();
-            return convertStreamToString(inputStream);
-        }catch (NetworkOnMainThreadException e){
-            Log.e(TAG, "Error: "  + e);
-            e.printStackTrace();
-        }
-        return null;
-    }
-*/
     public String convertStreamToString(InputStream inputStream){
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
@@ -378,8 +342,8 @@ startActivityForResult(signInIntent, RC_SIGN_IN); */
 
 
     public AuthState readAuthState() throws JSONException {
-        SharedPreferences authPrefs = getSharedPreferences("auth", MODE_PRIVATE);
-        String stateJson = authPrefs.getString("stateJson", "");
+        SharedPreferences authPrefs = getSharedPreferences("authPreference", MODE_PRIVATE);
+        String stateJson = authPrefs.getString("authStateJson", "");
         if (!stateJson.equals("")) {
             return AuthState.jsonDeserialize(stateJson);
         } else {
@@ -388,9 +352,9 @@ startActivityForResult(signInIntent, RC_SIGN_IN); */
     }
 
     public void writeAuthState(@NonNull AuthState state) {
-        SharedPreferences authPrefs = getSharedPreferences("auth", MODE_PRIVATE);
+        SharedPreferences authPrefs = getSharedPreferences("authPreference", MODE_PRIVATE);
         authPrefs.edit()
-                .putString("stateJson", state.jsonSerializeString())
+                .putString("authStateJson", state.jsonSerializeString())
                 .apply();
     }
 
@@ -413,18 +377,8 @@ startActivityForResult(signInIntent, RC_SIGN_IN); */
     }
 
     // PUSH
-    public class MyReceiver extends BroadcastReceiver {
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if ("com.example.hmsapp.ON_NEW_TOKEN".equals(intent.getAction())) {
-                String token = intent.getStringExtra("token");
-                tvtoken.setText(token);
-            }
-        }
-    }
-
-    private void getToken(){
+    private void GetHmsPushToken(){
         new Thread(){
             @Override
             public void run() {
@@ -432,10 +386,10 @@ startActivityForResult(signInIntent, RC_SIGN_IN); */
                     // leer el archivo agconnect-services.json
                     String appId = AGConnectServicesConfig.fromContext(MainActivity.this).getString("client/app_id");
                     String token = HmsInstanceId.getInstance(MainActivity.this).getToken(appId, "HCM");
-                    Log.i(TAG, "get token:" + token);
+                    Log.i(TAG, "get token: " + token);
                     //tvtoken.setText(token);
                 } catch (ApiException e) {
-                    Log.i(TAG, "get token failed:" + e);
+                    Log.i(TAG, "get token failed: " + e);
                 }
             }
         }.start();
